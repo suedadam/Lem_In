@@ -6,7 +6,7 @@
 /*   By: asyed <asyed@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/03 13:10:41 by asyed             #+#    #+#             */
-/*   Updated: 2018/01/03 19:53:39 by asyed            ###   ########.fr       */
+/*   Updated: 2018/01/03 20:37:37 by asyed            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,189 +15,97 @@
 #include <stdio.h> //lol
 #include <errno.h> //lol
 
-int	comment_parse(char **line, int *start)
+struct s_operations ops[] = {
+	{"total ants", &total_ants},
+	{"function chooser", &choose_func},
+	{"new room", &new_room},
+	{"new link", &new_link}
+};
+
+int	choose_func(t_input **input_d, char *line, int *op_i)
 {
-	if (!ft_strcmp(*line, "##start"))
+	if (*line == '#' && line[1] != '#')
+		return (comment_parse(line));
+	if (!ft_strcmp(line, "##start"))
+		return ((*op_i = 2));
+	if (!ft_strcmp(line, "##end"))
 	{
-		*start = 1;
+		return ((*op_i == 2) ? (*op_i = 3) : 0);
+	}
+	else if (line[1] == '#')
+	{
+		printf("Unknown command: \"%s\"\n", line);
 		return (1);
 	}
-	if (!ft_strcmp(*line, "##end"))
-	{
-		*start = 0;
-		return (1);
-	}
-	printf("I'm a comment bitch: \"%s\"\n", *line);
-	// free(*line);
-	// *line = NULL;
+	(void)input_d;
 	return (0);
 }
 
-int	skip_comments(char **line, int *start)
+int	new_room(t_input **input_d, char *line, int *op_i)
 {
-	if (*line)
-		free(*line);
-	while (get_next_line(0, line))
+	printf("Room lmao\n");
+	(void)op_i;
+	(void)input_d;
+	(void)line;
+	return (1);
+}
+
+int	new_link(t_input **input_d, char *line, int *op_i)
+{
+	printf("Link lmao\n");
+	(void)op_i;
+	(void)input_d;
+	(void)line;
+	return (1);
+}
+
+int	comment_parse(char *line)
+{
+	printf("Comment = \"%s\"\n", line);
+	return (1);
+}
+
+int	total_ants(t_input **input_d, char *line, int *op_i)
+{
+	if (*line == '#')
 	{
-		if (**line == '#' && comment_parse(line, start))
+		if (line[1]  && line[1] == '#')
 			return (0);
-		else if (**line != '#')
+		else if (comment_parse(line))
 			return (1);
 		else
-		{
-			free(*line);
-			*line = NULL;
-		}
+			return (0);
 	}
-	return (1);
-}
-
-// int	fill_rooms(t_input *input_d)
-// {
-// 	char	*line;
-// 	char	**line_d;
-// 	t_rooms	*s_room;
-
-// 	while (get_next_line(0, &line))
-// 	{
-// 		input_d->rooms = ft_memalloc(sizeof(t_rooms));
-// 		if (!input_d->rooms)
-// 		{
-// 			printf("Failed to ft_memalloc(input_d->rooms)\n");
-// 			return (0);
-// 		}
-// 		line_d = ft_strsplit(line, ' ');
-// 		input_d->rooms->name = (*line_d)++;
-// 		input_d->rooms->x = ft_atoi((*line_d)++);
-// 		input_d->rooms->y = ft_atoi((*line_d));
-// 	}
-// }
-
-int	info_copy(char **str, t_rooms **n_room)
-{
-	char	*new;
-	size_t	i;
-
-	new = ft_strdup(*str);
-	if (!new)
-	{
-		printf("Failed to ft_strdup(str)\n");
+	if ((*input_d)->ants)
 		return (0);
-	}
-	i = 0;
-	if (new[i] && (new[i] == '#' || new[i] == 'L'))
-	{
-		free(new);
-		new = NULL;
+	(*input_d)->ants = ft_atoi(line);
+	if (!(*input_d)->ants)
 		return (0);
-	}
-	while (new[i])
-	{
-		if (new[i] == ' ')
-			break ;
-		i++;
-	}
-	if (i == ft_strlen(*str))
-	{
-		free(new);
-		new = NULL;
-		return (0);
-	}
-	new[i++] = '\0';
-	(*n_room)->name = new;
-	(*n_room)->x = ft_atoi(&(new[i]));
-	i += (ft_nbrlen((*n_room)->x));
-	(*n_room)->y = ft_atoi(&(new[i]));
-	return (1);
-	//Reallocate to the new smaller size (i)!!!;
-}
-
-int	new_room(t_input **input_d, char **line)
-{
-	t_rooms	*new;
-
-	new = ft_memalloc(sizeof(t_rooms));
-	if (!new)
-	{
-		printf("Failed to ft_memalloc(new)\n");
-		return (0);
-	}
-	if (!info_copy(line, &new))
-	{
-		printf("Failed to info_copy(line, new)\n");
-		free(new);
-		new = NULL;
-		return (0);
-	}
-	printf("\n======\nRoom Created!\nName = %s, X,Y: %d, %d\n======\n\n", new->name, new->x, new->y);
-	if ((*input_d)->rooms)
-		new->next = (*input_d)->rooms;
-	(*input_d)->rooms = new; //Append it to the front!
+	*op_i = 1;
 	return (1);
 }
 
 int	parse_input(t_input **input_d)
 {
-	char *line;
-	int	start; //Bool to determine if we hit the Start/End command(s)	
+	char	*line;
+	int		i;
 
-	start = 0;
-	if (!skip_comments(&line, &start))
-		return (0);
-	(*input_d)->ants = ft_atoi(line);
-	if (!(*input_d)->ants && *line != '0')
-		return (0);
-	skip_comments(&line, &start);
-	if (ft_strcmp(line, "##start"))
-		return (0);
-	free(line);
 	line = NULL;
+	i = 0;
 	while (get_next_line(0, &line))
 	{
-		if (*line == '#')
+		printf("B: i = %d\n", i);
+		if (!ops[i].func(input_d, line, &i))
 		{
-			if (comment_parse(&line, &start))
-			{
-				free(line);
-				break ;
-			}
-		}
-		else if (new_room(input_d, &line))
-		{
-			printf("Added new room!\n");
-		}
-		/*
-		** Print all the rooms!
-		*/
-		else if (!ft_strcmp(line, "printall"))
-		{
-			t_rooms *itt;
-
-			itt = (*input_d)->rooms;
-			while (itt)
-			{
-				printf("======\nName = %s, X,Y: %d, %d\n======\n\n", itt->name, itt->x, itt->y);
-				itt = itt->next;
-			}
-		}
-		/*
-		** End remove me.
-		*/
-		else
-		{
-			printf("Unexpected input: %s\n", line);
+			printf("Error: Failed to execute %s func\n", ops[i].op_name);
 			free(line);
 			line = NULL;
+			return (0);
 		}
+		printf("A: i = %d\n", i);
+		free(line);
+		line = NULL;
 	}
-	// while (get_next_line(0, &line))
-	// {
-	// 	if (!new_room(input_d, &line))
-	// 	{
-	// 		printf("Error'd on fill_rooms()\n");
-	// 		return (0);
-	// 	}		
-	// }
 	return (1);
 }
 
