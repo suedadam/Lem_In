@@ -6,7 +6,7 @@
 /*   By: asyed <asyed@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/03 13:19:23 by asyed             #+#    #+#             */
-/*   Updated: 2018/01/03 20:35:58 by asyed            ###   ########.fr       */
+/*   Updated: 2018/01/03 23:22:20 by asyed            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,10 @@ typedef struct	s_rooms
 typedef struct	s_input
 {
 	int		ants;
+	int		p;
+	t_rooms	*origin;
 	t_rooms	*rooms;
+	t_rooms *dest;
 }				t_input;
 
 int	new_room(t_input **input_d, char *line, int *op_i);

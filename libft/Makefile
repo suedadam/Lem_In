@@ -39,6 +39,7 @@ LIBFT_SRC = ./ft_strrchr.c \
 ./ft_putchar.c \
 ./ft_isascii.c \
 ./ft_strlen.c \
+./ft_strclen.c \
 ./ft_strsub.c \
 ./ft_strnew.c \
 ./ft_memalloc.c \
