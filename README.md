@@ -1,5 +1,4 @@
 # Lem_In
-======
 The following is my attempt at documenting my progress through this project. 
 
 ***
