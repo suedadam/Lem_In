@@ -12,34 +12,100 @@
 
 #include "lem_in.h"
 
-int	new_link(t_input **input_d, char *line, int *op_i)
+t_rooms	*find_room(t_input **input_d, char *room_name)
 {
-	printf("Link lmao\n");
-	(void)op_i;
-	(void)input_d;
-	(void)line;
+	t_rooms	*ret;
+
+	ret = NULL;
+	if (!ret)
+		ret = is_room((*input_d)->origin, room_name);
+	if (!ret)
+		ret = is_room((*input_d)->rooms, room_name);
+	if (!ret)
+		ret = is_room((*input_d)->dest, room_name);
+	return (ret);
+}
+
+int append_link(t_links *src_links, t_links *new)
+{
+	t_links	*tmp;
+
+	tmp = src_links;
+	while (tmp->next)
+		tmp = tmp->next;
+	tmp->next = new;
+	new->prev = tmp;
+	src_links->prev = new;
 	return (1);
 }
 
-int	new_room(t_input **input_d, char *line, int *op_i)
+int	new_link(t_input **input_d, char *line)
 {
-	get_next_line(0, &line);
+	t_links	*new;
+	char	*og_name;
+	char	*dst_name;
+	void	*storage;
+	t_rooms	*src;
+	int		i;
+
+	new = ft_memalloc(sizeof(t_links));
+	if (!new)
+	{
+		printf("Failed to malloc()\n");
+		return (0);
+	}
+	i = ft_strclen(line, '-');
+	og_name = ft_strcdup(line, '-');
+	dst_name = ft_strdup(&(line[++i]));
+	new->end = find_room(input_d, dst_name);
+	if (!(new->end))
+	{
+		printf("End room \"%s\" not found\n", dst_name);
+		return (0);
+	}
+	src = find_room(input_d, og_name);
+	if (!src)
+	{
+		printf("SRC room \"%s\" not found\n", og_name);
+		return (0);
+	}
+	if (!append_link(src->to_link, new))
+	{
+		printf("Failed to append\n");
+		return (0);
+	}
+	storage = new->end;
+	new = ft_memalloc(sizeof(t_links));
+	if (!new)
+	{
+		printf("Failed to malloc()\n");
+		return (0);
+	}
+	new->end = src;
+	if (!append_link(((t_rooms *)storage)->to_link, new))
+	{
+		printf("Failed to append\n");
+		return (0);
+	}
+	return (1);
+}
+
+int	new_room(t_input **input_d, char *line)
+{
 	if (!add_room((void **)&((*input_d)->rooms), line))
 		return (0);
-	printf("=========\nRoom Created:\nName: \"%s\"\n", (*input_d)->origin->name);
-	(void)op_i;
+	printf("=========\nRoom Created:\nName: \"%s\"\n", (*input_d)->rooms->name);
 	return (1);
 }
 
-int p_comment(t_input **input_d, char *line, int *op_i)
+int p_comment(t_input **input_d, char *line)
 {
 	printf("Comment = \"%s\"\n", line);
 	(void)input_d;
-	(void)op_i;
 	return (1);
 }
 
-int		print_all(t_input **input_d, char *line, int *op_i)
+int		print_all(t_input **input_d, char *line)
 {
 	t_rooms	*omg;
 
@@ -64,11 +130,10 @@ int		print_all(t_input **input_d, char *line, int *op_i)
 	}
 	printf("============\n");
 	(void)line;
-	(void)op_i;
 	return (1);
 }
 
-int	p_command(t_input **input_d, char *line, int *op_i)
+int	p_command(t_input **input_d, char *line)
 {
 	if (!ft_strcmp(line, "##start"))
 	{
@@ -82,6 +147,5 @@ int	p_command(t_input **input_d, char *line, int *op_i)
 		if (!add_room((void **)&((*input_d)->dest), line))
 			return (0);
 	}
-	(void)op_i;
 	return (1);
 }

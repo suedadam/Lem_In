@@ -11,11 +11,14 @@
 /* ************************************************************************** */
 
 #include "lem_in.h"
+#include <stdlib.h>
 
 int		debug_print(t_input *input_d, char *line)
 {
 	(void)input_d;
-	return (!ft_strcmp(line, "printall"));
+	if (!ft_strcmp(line, "printall"))
+		return (1);
+	return (0);
 }
 
 int	is_link(t_input *input_d, char *line)
@@ -46,6 +49,48 @@ int	is_link(t_input *input_d, char *line)
 		return (-1);
 	}
 	return (1);
+}
+
+int	find_not_num(const char *line, int length)
+{
+	int	i;
+
+	i = 0;
+
+	while (i < length)
+	{
+		if (!line[i] || line[i] < '0' || line[i] > '9')
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+int	is_num(char *line)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = ft_strclen(&(line[i]), ' ');
+	if (find_not_num(&(line[i]), j))
+		return (0);
+	i = ++j;
+	j = ft_strlen(&(line[i]));
+	if (find_not_num(&(line[i]), --j))
+		return (0);
+	return (1);
+}
+
+int	is_valid_room(t_input *input_d, char *line)
+{
+	int	i;
+
+	if (word_c(line) != 3 || *line == 'L' || *line == '#')
+		return (0);
+	i = ft_strclen(line, ' ');
+	(void)input_d;
+	return (is_num(&(line[++i])));
 }
 
 int	is_comment(t_input *input_d, char *line)

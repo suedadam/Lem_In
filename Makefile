@@ -16,6 +16,9 @@ CFLAGS += -Wall -Werror -Wextra -g
 
 SRC = main.c \
 		validation.c \
+		utils.c \
+		room.c \
+		execution.c \
 
 LIBFT = libft/
 

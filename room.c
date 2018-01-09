@@ -11,28 +11,33 @@
 /* ************************************************************************** */
 
 #include "lem_in.h"
+#include <stdlib.h>
 
 int	valid_room(char *str, t_rooms *new)
 {
 	int	i;
-	int tmp;
 
 	if (word_c(str) != 3 || *str == 'L' || *str == '#')
+	{
+		printf("wtf\n");
 		return (0);
+	}
 	i = ft_strclen(str, ' ');
 	str[i++] = '\0';
 	new->name = ft_strdup(str);
-	skip_char(str, &i, ' ');
-	tmp = ft_atoi(&(str[i]));
-	if (!tmp && str[i] != '0')
+	new->x = ft_atoi(&(str[i]));
+	if (!new->x && str[i++] != '0')
+	{
+		printf("failed to copied over\n");
 		return (0);
-	new->x = tmp;
-	i += ft_nbrlen(tmp);
-	skip_char(str, &i, ' ');
-	tmp = ft_atoi(&(str[i]));
-	if (!tmp && str[i] != '0')
+	}
+	i += ft_strclen(&(str[i]), ' ');
+	new->y = ft_atoi(&(str[i]));
+	if (!new->y && str[i] != '0')
+	{
+		printf("failed to copy over\n");
 		return (0);
-	new->y = tmp;
+	}
 	return (1);
 }
 
@@ -57,13 +62,13 @@ int	add_room(void **building, char *line)
 	return (1);
 }
 
-int	is_room(t_rooms *floor, char *room_name)
+t_rooms	*is_room(t_rooms *floor, char *room_name)
 {
 	while (floor)
 	{
 		if (!ft_strcmp(floor->name, room_name))
-			return (1);
+			return floor;
 		floor = floor->next;
 	}
-	return (0);
+	return (NULL);
 }

@@ -17,37 +17,14 @@
 
 // http://macfreek.nl/memory/Disjoint_Path_Finding
 
-struct s_operations ops[] = {
-	{"total ants", &total_ants},
-	{"function chooser", &choose_func}
-};
-
 struct s_syntax validator[] = {
 	{"link", &is_link, &new_link},
 	{"comments", &is_comment, &p_comment},
 	{"command", &is_command, &p_command},
-	// {"Normal room add", &is_valid_room, &new_room},
+	{"Normal room add", &is_valid_room, &new_room},
 	{"debugger print all", &debug_print, &print_all},
 	{NULL, NULL, NULL}
 };
-
-int	choose_func(t_input **input_d, char *line, int *op_i)
-{
-	int		i;
-	int		res;
-
-	i = 0;
-	while (validator[i].match)
-	{
-		if ((res = validator[i].match(*input_d, line)) == 1)
-			return (validator[i].exec(input_d, line, op_i));
-		if (res == -1)
-			return (0);
-		i++;
-	}
-	(void)op_i;
-	return (0);
-}
 
 int	comment_parse(char *line)
 {
@@ -55,44 +32,60 @@ int	comment_parse(char *line)
 	return (1);
 }
 
-int	total_ants(t_input **input_d, char *line, int *op_i)
+int	total_ants(t_input **input_d)
 {
-	if (*line == '#')
+	char	*line;
+
+	line = NULL;
+	while (get_next_line(0, &line))
 	{
-		if (line[1] && line[1] == '#')
+		if (*line == '#')
+		{
+			if (line[1] && line[1] == '#')
+				return (0);
+			else if (comment_parse(line))
+				continue ;
+			else
+				return (0);
+		}
+		if ((*input_d)->ants)
 			return (0);
-		else if (comment_parse(line))
-			return (1);
-		else
+		(*input_d)->ants = ft_atoi(line);
+		if (!(*input_d)->ants)
 			return (0);
+		return (1);
 	}
-	if ((*input_d)->ants)
-		return (0);
-	(*input_d)->ants = ft_atoi(line);
-	if (!(*input_d)->ants)
-		return (0);
-	*op_i = 1;
-	return (1);
+	return (0);
 }
 
 int	parse_input(t_input **input_d)
 {
 	char	*line;
 	int		i;
+	int		res;
 
 	line = NULL;
-	i = 0;
+	if (!total_ants(input_d))
+		return (0);
 	while (get_next_line(0, &line))
 	{
-		printf("B: i = %d\n", i);
-		if (!ops[i].func(input_d, line, &i))
+		i = 0;
+		while (validator[i].match)
 		{
-			printf("Error: Failed to execute \"%s\" func\n", ops[i].op_name);
-			free(line);
-			line = NULL;
-			return (0);
+			if ((res = validator[i].match(*input_d, line)) == 1)
+			{
+				printf("Passed match(\"%s\")\n", validator[i].op_name);
+				if (validator[i].exec(input_d, line))
+					break ;
+				else
+					return (0);
+			}
+			if (res == -1)
+				return (0);
+			i++;
 		}
-		printf("A: i = %d\n", i);
+		if (!validator[i].match)
+			return (0);
 		free(line);
 		line = NULL;
 	}
