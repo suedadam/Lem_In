@@ -48,6 +48,7 @@ int		new_link(t_input **input_d, char *line);
 int		new_room(t_input **input_d, char *line);
 int		p_comment(t_input **input_d, char *line);
 int		print_all(t_input **input_d, char *line);
+int		print_links(t_input **input_d, char *line);
 int		p_command(t_input **input_d, char *line);
 
 /*
@@ -74,6 +75,7 @@ int	word_c(char *str);
 ** validation.c
 */
 int	debug_print(t_input *input_d, char *line);
+int	debug_print_links(t_input *input_d, char *line);
 int	is_link(t_input *input_d, char *line);
 int	is_comment(t_input *input_d, char *line);
 int	is_command(t_input *input_d, char *line);

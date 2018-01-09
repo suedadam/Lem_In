@@ -26,16 +26,24 @@ t_rooms	*find_room(t_input **input_d, char *room_name)
 	return (ret);
 }
 
-int append_link(t_links *src_links, t_links *new)
+int append_link(t_links **src_links, t_links **new)
 {
 	t_links	*tmp;
 
-	tmp = src_links;
-	while (tmp->next)
-		tmp = tmp->next;
-	tmp->next = new;
-	new->prev = tmp;
-	src_links->prev = new;
+	if (!*src_links)
+	{
+		*src_links = *new;
+		tmp = (*src_links);
+	}
+	else
+	{
+		tmp = (*src_links);
+		while (tmp->next)
+			tmp = tmp->next;
+		tmp->next = (*new);
+		(*new)->prev = tmp;
+	}
+	(*src_links)->prev = (*new);
 	return (1);
 }
 
@@ -44,7 +52,7 @@ int	new_link(t_input **input_d, char *line)
 	t_links	*new;
 	char	*og_name;
 	char	*dst_name;
-	void	*storage;
+	t_rooms	*storage;
 	t_rooms	*src;
 	int		i;
 
@@ -69,7 +77,7 @@ int	new_link(t_input **input_d, char *line)
 		printf("SRC room \"%s\" not found\n", og_name);
 		return (0);
 	}
-	if (!append_link(src->to_link, new))
+	if (!append_link(&(src->to_link), &new))
 	{
 		printf("Failed to append\n");
 		return (0);
@@ -82,7 +90,7 @@ int	new_link(t_input **input_d, char *line)
 		return (0);
 	}
 	new->end = src;
-	if (!append_link(((t_rooms *)storage)->to_link, new))
+	if (!append_link(&(storage->to_link), &new))
 	{
 		printf("Failed to append\n");
 		return (0);
@@ -102,6 +110,22 @@ int p_comment(t_input **input_d, char *line)
 {
 	printf("Comment = \"%s\"\n", line);
 	(void)input_d;
+	return (1);
+}
+
+int	print_links(t_input **input_d, char *line)
+{
+	int 	i;
+	t_rooms *room;
+	
+	i = ft_strclen(line, ' ');
+	room = find_room(input_d, &(line[++i]));
+	printf("=======\n");
+	while (room->to_link)
+	{
+		printf("Room link is to room \"%s\"\n", room->to_link->end->name);
+		room->to_link = room->to_link->next;
+	}
 	return (1);
 }
 

@@ -21,6 +21,15 @@ int		debug_print(t_input *input_d, char *line)
 	return (0);
 }
 
+int		debug_print_links(t_input *input_d, char *line)
+{
+	(void)input_d;
+	line = ft_strcdup(line, ' ');
+	if (!ft_strcmp(line, "printlinks"))
+		return (1);
+	return (0);
+}
+
 int	is_link(t_input *input_d, char *line)
 {
 	char	*room;

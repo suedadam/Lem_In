@@ -23,6 +23,7 @@ struct s_syntax validator[] = {
 	{"command", &is_command, &p_command},
 	{"Normal room add", &is_valid_room, &new_room},
 	{"debugger print all", &debug_print, &print_all},
+	{"Debug printing all links", &debug_print_links, &print_links},
 	{NULL, NULL, NULL}
 };
 
