@@ -1,0 +1,13 @@
+12
+##start
+Adam 4 4
+##end
+Eileen 2 2
+Dustin 9 8
+Paulina 3 2
+Stephen 1 1
+Stephen-Adam
+Eileen-Stephen
+Dustin-Adam
+Paulina-Dustin
+Eileen-Paulina
