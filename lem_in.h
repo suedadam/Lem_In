@@ -6,18 +6,21 @@
 /*   By: asyed <asyed@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/03 13:19:23 by asyed             #+#    #+#             */
-/*   Updated: 2018/01/04 19:34:10 by asyed            ###   ########.fr       */
+/*   Updated: 2018/01/10 21:30:18 by asyed            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_LEM_IN_H
 # define FT_LEM_IN_H
 # include "libft/libft.h"
+# include <limits.h>
+# define INFINITY INT_MAX
 
 typedef struct	s_links
 {
 	struct s_links	*prev;
 	struct s_rooms	*end;
+	int				weight;
 	struct s_links	*next;
 }				t_links;
 
@@ -26,7 +29,7 @@ typedef struct	s_rooms
 	char			*name;
 	int				x;
 	int				y;
-	struct s_rooms	*prev;
+	struct s_rooms	*path;
 	struct s_links	*to_link;
 	struct s_rooms	*next;
 }				t_rooms;
@@ -80,6 +83,21 @@ int	is_link(t_input *input_d, char *line);
 int	is_comment(t_input *input_d, char *line);
 int	is_command(t_input *input_d, char *line);
 int	is_valid_room(t_input *input_d, char *line);
+
+/*
+** djkstra.c 
+*/
+
+int	path_weight(t_rooms *src, t_rooms *dest);
+int	node_weight(t_rooms *node);
+
+/*
+** Debug bullshit
+*/
+int	print_weight(t_input **input_d, char *line);
+int	debug_weight(t_input *input_d, char *line);
+int	debug_pathbuilder(t_input *input_d, char *line);
+int	buildmeafuckingpath(t_input **input_d, char *line);
 
 struct			s_syntax
 {

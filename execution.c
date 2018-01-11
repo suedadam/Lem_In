@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: asyed <asyed@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/01/04 20:07:13 by asyed             #+#    #+#             */
-/*   Updated: 2018/01/04 20:09:36 by asyed            ###   ########.fr       */
+/*   Created: 2018/01/09 15:13:33 by asyed             #+#    #+#             */
+/*   Updated: 2018/01/09 22:38:45 by asyed            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ t_rooms	*find_room(t_input **input_d, char *room_name)
 	return (ret);
 }
 
-int append_link(t_links **src_links, t_links **new)
+int append_link(t_links **src_links, t_links **new, int weight)
 {
 	t_links	*tmp;
 
@@ -44,6 +44,7 @@ int append_link(t_links **src_links, t_links **new)
 		(*new)->prev = tmp;
 	}
 	(*src_links)->prev = (*new);
+	(*new)->weight = weight;
 	return (1);
 }
 
@@ -77,7 +78,7 @@ int	new_link(t_input **input_d, char *line)
 		printf("SRC room \"%s\" not found\n", og_name);
 		return (0);
 	}
-	if (!append_link(&(src->to_link), &new))
+	if (!append_link(&(src->to_link), &new, 1))
 	{
 		printf("Failed to append\n");
 		return (0);
@@ -90,7 +91,7 @@ int	new_link(t_input **input_d, char *line)
 		return (0);
 	}
 	new->end = src;
-	if (!append_link(&(storage->to_link), &new))
+	if (!append_link(&(storage->to_link), &new, 1))
 	{
 		printf("Failed to append\n");
 		return (0);
