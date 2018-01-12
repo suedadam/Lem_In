@@ -6,7 +6,7 @@
 /*   By: asyed <asyed@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/04 20:11:00 by asyed             #+#    #+#             */
-/*   Updated: 2018/01/04 20:11:09 by asyed            ###   ########.fr       */
+/*   Updated: 2018/01/12 13:14:50 by asyed            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,3 +37,10 @@ int	word_c(char *str)
 	return (i);
 }
 
+char	next_char(const char *str)
+{
+	while (*str && (*str == ' ' || *str == '\t' || *str == '\r'
+		|| *str == '\v' || *str == '\f'))
+		str++;
+	return (*str);
+}

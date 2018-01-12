@@ -6,7 +6,7 @@
 /*   By: asyed <asyed@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/03 13:19:23 by asyed             #+#    #+#             */
-/*   Updated: 2018/01/11 21:03:19 by asyed            ###   ########.fr       */
+/*   Updated: 2018/01/12 13:15:02 by asyed            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,8 @@ t_rooms	*is_room(t_rooms *floor, char *room_name);
 ** utils.c
 */
 void	skip_char(char *str, int *i, char c);
-int	word_c(char *str);
-
+int		word_c(char *str);
+char	next_char(const char *str);
 /*
 ** validation.c
 */

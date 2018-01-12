@@ -6,7 +6,7 @@
 /*   By: asyed <asyed@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/04 20:09:57 by asyed             #+#    #+#             */
-/*   Updated: 2018/01/09 22:38:28 by asyed            ###   ########.fr       */
+/*   Updated: 2018/01/12 13:15:41 by asyed            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,16 +26,16 @@ int	valid_room(char *str, t_rooms *new)
 	str[i++] = '\0';
 	new->name = ft_strdup(str);
 	new->x = ft_atoi(&(str[i]));
-	if (!new->x && str[i++] != '0')
+	if (!new->x && next_char(&(str[i++])) != '0')
 	{
 		printf("failed to copied over\n");
 		return (0);
 	}
 	i += ft_strclen(&(str[i]), ' ');
 	new->y = ft_atoi(&(str[i]));
-	if (!new->y && str[i] != '0')
+	if (!new->y && next_char(&(str[i])) != '0')
 	{
-		printf("failed to copy over\n");
+		printf("failed to copy over (%c)\n", str[i]);
 		return (0);
 	}
 	return (1);
