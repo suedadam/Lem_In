@@ -1,0 +1,20 @@
+12
+##start
+A 1 1
+##end
+H 4 4
+B 2 2
+C 3 3
+E 1 1
+D 1 1
+F 1 1
+G 1 1
+A-B
+B-C
+C-D
+A-E
+E-D
+E-F
+D-H
+F-G
+G-H
