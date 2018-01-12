@@ -6,7 +6,7 @@
 /*   By: asyed <asyed@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/03 13:10:41 by asyed             #+#    #+#             */
-/*   Updated: 2018/01/11 00:01:38 by asyed            ###   ########.fr       */
+/*   Updated: 2018/01/12 13:37:51 by asyed            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,7 @@ int	parse_input(t_input **input_d)
 		{
 			if ((res = validator[i].match(*input_d, line)) == 1)
 			{
-				printf("Passed match(\"%s\")\n", validator[i].op_name);
+				// printf("Passed match(\"%s\")\n", validator[i].op_name);
 				if (validator[i].exec(input_d, line))
 					break ;
 				else
@@ -165,6 +165,7 @@ int	main(void)
 	}
 	if (parse_input(&input_d))
 	{
+		printf("Starting!\n");
 		dijkstra(&input_d);
 		// ..
 	}

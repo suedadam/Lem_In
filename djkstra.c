@@ -6,7 +6,7 @@
 /*   By: asyed <asyed@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/09 22:07:38 by asyed             #+#    #+#             */
-/*   Updated: 2018/01/12 13:33:55 by asyed            ###   ########.fr       */
+/*   Updated: 2018/01/12 15:08:18 by asyed            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,9 +70,9 @@ int	neighbor_update(t_rooms *node, t_input **input_d)
 			(n_weight == INFINITY ||
 				node_weight(neighbors->end) > n_weight + path_weight(node, neighbors->end)))
 		{
-			printf("%s's neighbor (%s) has weight (%d > %d + %d)\n", node->name, neighbors->end->name, node_weight(neighbors->end), n_weight, path_weight(node, neighbors->end));
-			neighbors->end->path = node; //Update previous path.
-			neighbor_update(neighbors->end, input_d);
+			neighbors->end->path = node;
+			if (neighbors->end != (*input_d)->dest)
+				neighbor_update(neighbors->end, input_d);
 		}
 		neighbors = neighbors->next;
 	}
@@ -89,7 +89,6 @@ int	dijkstra(t_input **input_d)
 		printf("Failed to initialize neighbors from starting room.\n");
 		return (0);
 	}
-	neighbor_update(node, input_d);
 	printf("Done :)\n");
 	printf("\n========== OP =========\n");
 	printf("Optimal path to |\"%s\"|", (*input_d)->dest->name);
@@ -102,6 +101,5 @@ int	dijkstra(t_input **input_d)
 		printf("%s\n", optimal->name);
 		optimal = optimal->path;
 	}
-	//End remove me.
 	return (1);
 }
