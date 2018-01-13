@@ -6,7 +6,7 @@
 /*   By: asyed <asyed@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/18 11:27:49 by asyed             #+#    #+#             */
-/*   Updated: 2017/12/07 15:15:31 by asyed            ###   ########.fr       */
+/*   Updated: 2018/01/04 17:02:37 by asyed            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,12 +67,14 @@ int				ft_strcmp(const char *s1, const char *s2);
 char			*ft_strcpy(char *dest, const char *src);
 void			ft_strdel(char **ap);
 char			*ft_strdup(const char *s);
+char			*ft_strcdup(const char *line, char c);
 int				ft_strequ(char const *s1, char const *s2);
 void			ft_striter(char *s, void (*f)(char *));
 void			ft_striteri(char *s, void (*f)(unsigned int, char *));
 char			*ft_strjoin(char const *s1, char const *s2);
 size_t			ft_strlcat(char *dest, const char *src, size_t n);
 size_t			ft_strlen(const char *s);
+size_t			ft_strclen(const char *s, char c);
 char			*ft_strmap(char const *s, char (*f)(char));
 char			*ft_strmapi(char const *s, char (*f)(unsigned int, char));
 char			*ft_strncat(char *dest, const char *src, size_t n);

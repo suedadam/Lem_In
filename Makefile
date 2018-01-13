@@ -6,7 +6,7 @@
 #    By: asyed <asyed@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/07 01:09:10 by asyed             #+#    #+#              #
-#    Updated: 2018/01/03 13:22:24 by asyed            ###   ########.fr        #
+#    Updated: 2018/01/10 15:32:28 by asyed            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,6 +15,11 @@ NAME = lem_in
 CFLAGS += -Wall -Werror -Wextra -g
 
 SRC = main.c \
+		validation.c \
+		utils.c \
+		room.c \
+		execution.c \
+		djkstra.c \
 
 LIBFT = libft/
 
