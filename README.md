@@ -18,3 +18,8 @@ The following is my attempt at documenting my progress through this project.
 
 #### Negative Cycles 
 - [Negative Cycles Lecture (Not very informative)](http://eniac.cs.qc.cuny.edu/andrew/csci700/lecture18.pdf)
+=======
+### Bellman-Ford(-Moore) algorithm:
+#### Relaxation
+- ![My notes for Relaxation Condition/Algorithm](relaxation_condition.pdf "Relaxation Condition/Algorithm Notes")
+- ![Resource on Relaxation Equation](https://brilliant.org/wiki/bellman-ford-algorithm/#relaxation-equation)
