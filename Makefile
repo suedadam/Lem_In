@@ -6,10 +6,9 @@
 #    By: asyed <asyed@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/07 01:09:10 by asyed             #+#    #+#              #
-#    Updated: 2018/01/10 15:32:28 by asyed            ###   ########.fr        #
+#    Updated: 2018/01/16 13:48:47 by asyed            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
-
 NAME = lem_in
 
 CFLAGS += -Wall -Werror -Wextra -g
@@ -27,7 +26,8 @@ all: $(NAME)
 
 $(NAME):
 	@make -C $(LIBFT)
-	@gcc $(CFLAGS) $(SRC) $(LIBFT)/libft.a -I $(LIBFT) -o $(NAME)
+	@gcc $(CFLAGS) $(SRC) $(LIBFT)/libft.a ~/efence/libefence.a -I $(LIBFT) -o $(NAME)
+	# @gcc $(CFLAGS) $(SRC) $(LIBFT)/libft.a -I $(LIBFT) -o $(NAME)
 	@echo "\033[32mBuilt\033[0m"
 
 clean:

@@ -6,7 +6,7 @@
 /*   By: asyed <asyed@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/03 13:10:41 by asyed             #+#    #+#             */
-/*   Updated: 2018/01/12 13:37:51 by asyed            ###   ########.fr       */
+/*   Updated: 2018/01/15 15:34:34 by asyed            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,10 @@
 #include <stdlib.h>
 #include <stdio.h> //lol
 #include <errno.h> //lol
+//*Deete me
+#include <sys/stat.h> 
+#include <fcntl.h>
+//End delete me
 
 // http://macfreek.nl/memory/Disjoint_Path_Finding
 

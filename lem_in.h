@@ -6,7 +6,7 @@
 /*   By: asyed <asyed@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/03 13:19:23 by asyed             #+#    #+#             */
-/*   Updated: 2018/01/12 13:15:02 by asyed            ###   ########.fr       */
+/*   Updated: 2018/01/17 15:13:43 by asyed            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,10 +88,11 @@ int	is_valid_room(t_input *input_d, char *line);
 ** djkstra.c 
 */
 
-int	path_weight(t_rooms *src, t_rooms *dest);
-int	node_weight(t_rooms *node);
-int	dijkstra(t_input **input_d);
-int	neighbor_update(t_rooms *node, t_input **input_d);
+int		path_weight(t_rooms *src, t_rooms *dest);
+int		node_weight(t_rooms *node);
+int		dijkstra(t_input **input_d);
+int		neighbor_update(t_rooms *node, t_input **input_d);
+t_links	*find_link(t_rooms *src, t_rooms *node);
 
 /*
 ** Debug bullshit
