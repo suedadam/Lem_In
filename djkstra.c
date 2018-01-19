@@ -6,7 +6,7 @@
 /*   By: asyed <asyed@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/09 22:07:38 by asyed             #+#    #+#             */
-/*   Updated: 2018/01/17 15:26:09 by asyed            ###   ########.fr       */
+/*   Updated: 2018/01/18 15:09:56 by asyed            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	backwards_node_weight(t_rooms *node)
 	tmp = node;
 	while (tmp->path)
 	{
-		printf("(%s)%d += (%s)%d\n", tmp->name, weight, tmp->path->name, path_weight(tmp, tmp->path));
+		// printf("(%s)%d += (%s)%d\n", tmp->name, weight, tmp->path->name, path_weight(tmp, tmp->path));
 		weight += path_weight(tmp, tmp->path);
 		tmp = tmp->path;
 	}
@@ -56,7 +56,7 @@ int	node_weight(t_rooms *node)
 	tmp = node;
 	while (tmp->path)
 	{
-		printf("(%s)%d += (%s)%d\n", tmp->path->name, weight, tmp->name, path_weight(tmp->path, tmp));
+		// printf("(%s)%d += (%s)%d\n", tmp->path->name, weight, tmp->name, path_weight(tmp->path, tmp));
 		weight += path_weight(tmp->path, tmp);
 		tmp = tmp->path;
 	}
@@ -72,7 +72,8 @@ int	dij_start(t_input **input_d)
 	neighbors = node->to_link;
 	while (neighbors)
 	{
-		neighbors->end->path = node;
+		if (find_link(node, neighbors->end))
+			neighbors->end->path = node;
 		neighbors = neighbors->next;
 	}
 	neighbors = node->to_link;
@@ -98,7 +99,6 @@ int	neighbor_update(t_rooms *node, t_input **input_d)
 				node_weight(neighbors->end) > n_weight + path_weight(node, neighbors->end)))
 		{
 			neighbors->end->path = node;
-			// neighbor_update(neighbors->end, input_d);
 		}
 		neighbors = neighbors->next;
 	}
@@ -133,20 +133,20 @@ int	min_neighbor(t_rooms *node, t_input **input_d)
 	return (modified);
 }
 
-int	list_update(t_rooms *node, t_input **input_d)
+int	list_update(t_input **input_d)
 {
 	int		res;
 	t_rooms	*tmp;
 	
 	res = 1;
-	while (node && res)
+	while (res)
 	{
 		printf("==========Next itteration!!!!=======\n");
 		res = 0;
-		tmp = node;
+		tmp = (*input_d)->rooms;
 		while (tmp)
 		{
-			printf("Next neighbor(%s)\n", tmp->name);
+			// printf("Next neighbor(%s)\n", tmp->name);
 			res += min_neighbor(tmp, input_d);
 			tmp = tmp->next;
 		}
@@ -165,6 +165,13 @@ int	in_path(t_rooms *path, t_rooms *subpath)
 	return (0);
 }
 
+t_links *last_link(t_links *links)
+{
+	while (links && links->next)
+		links = links->next;
+	return (links);
+}
+
 int	del_lastl(t_links *links)
 {
 	t_links	*tmp;
@@ -179,6 +186,7 @@ int	del_lastl(t_links *links)
 		return (0);
 	}
 	tmp->prev = tmp->prev->prev;
+	printf("del_lastl(->prev set to %s && prev = %s)\n", tmp->prev->end->name, last_link(links)->end->name);
 	return (1);
 }
 
@@ -203,7 +211,7 @@ int	delete_link(t_rooms *src, t_rooms **dest)
 	link = find_link(src, *dest);
 	if (!link)
 	{
-		printf("Not found.\n");
+		printf("Not found. (%s->%s)\n", src->name, (*dest)->name);
 		return (0);
 	}
 	link->prev->next = link->next;
@@ -211,9 +219,21 @@ int	delete_link(t_rooms *src, t_rooms **dest)
 		link->next->prev = link->prev;
 	else
 	{
-		printf("Last link (%s->%s)\n", src->name, link->end->name);
+		printf("Last link (%s->%s) (Deleteing %s)\n", src->name, link->end->name, (*dest)->name);
 		if (!del_lastl(link))
 			return (0);
+		// else
+		// {
+		// 	printf("Printing all of the links:\n");
+		// 	t_links	*bullshit;
+
+		// 	bullshit = link;
+		// 	while (bullshit)
+		// 	{
+		// 		printf("%s <- %s -> %s\n", bullshit->prev->end->name, bullshit->end->name, (bullshit->next) ? bullshit->next->end->name : "NULL");
+		// 		bullshit = bullshit->next;
+		// 	}
+		// }
 	}
 	free(link);
 	return (1);
@@ -250,10 +270,14 @@ int	reverse_direction(t_rooms *dest)
 	optimal = dest;
 	while (optimal && optimal->path)
 	{
-		delete_link(optimal->path, &optimal);
+		if (!delete_link(optimal->path, &optimal))
+		{
+			printf("{reverse_direction} delete_link(err)\n");
+			return (0);
+		}
 		if (!inverse_weight(find_link(optimal, optimal->path)))
 		{
-			printf("Failed to inverse weight\n");
+			printf("{reverse_direction} Failed to inverse_weight()\n");
 			return (0);
 		}
 		optimal = optimal->path;
@@ -268,42 +292,87 @@ int	forward_direction(t_rooms *dest)
 	optimal = dest;
 	while (optimal && optimal->path)
 	{
-		// printf("Deleting link from %s -> %s\n", optimal->name, optimal->path->name);
 		if (!delete_link(optimal, &(optimal->path)))
 			return (0);
-		// printf("Deleted.\n");
 		optimal = optimal->path;
 	}
 	return (1);
 }
 
-int	inverse_optimal(t_rooms **node, t_input **input_d)
+int	inverse_optimal(t_input **input_d)
 {
 	t_rooms *i_node;
 
 	reverse_direction((*input_d)->dest);
-	i_node = *node;
+	i_node = (*input_d)->rooms;
 	while (i_node)
 	{
-		printf("Room: \"%s\" is *NOT* present\n", i_node->name);
 		i_node->path = NULL;
 		i_node = i_node->next;
 	}
 	(*input_d)->dest->path = NULL;
 	return (1);
 }
+/*
+** One = prev -> curr
+** Two = curr -> prev
+*/
+int	flatten_paths(t_input **input_d)
+{
+	t_rooms	*node;
+	t_links	*one;
+	t_links	*two;
 
-// int	sum_paths(t_rooms *node, t_input **input_d, uint8_t directional)
-// {
-// 	t_rooms	*i_node;
+	node = (*input_d)->dest;
+	while (node)
+	{
+		if (node->path)
+		{
+			printf("Evaluating %s and %s\n", node->path->name, node->name);
+			if (!(one = find_link(node->path, node)) || !(two = find_link(node, node->path)))
+			{
+				printf("Failed to find :'( \n");
+				// return (0);
+				node = node->path;
+				continue;
+			}
+			if (one->weight > two->weight)
+			{
+				printf("DELETE ONE\n");
+				delete_link(node->path, &node);
+			}
+			else if (two->weight > one->weight)
+			{
+				printf("DELETE TWO\n");
+				delete_link(node, &(node->path));
+			}
+			else
+			{
+				printf("DELETE EARTHHHHHHHHH\n");
+				delete_link(node->path, &node);
+				delete_link(node, &(node->path));
+			}
+		}
+		// else
+			//... continue...?
+		node = node->path;
+	}
+	return (1);
+}
 
-// 	i_node = *node;
-// 	while (i_node)
-// 	{
-// 		//...
-// 		i_node = i_node->next;
-// 	}
-// }
+int	bellman(t_input **input_d)
+{
+	inverse_optimal(input_d);
+	if (!dij_start(input_d))
+	{
+		printf("Failed dij_start(2nd)\n");
+		return (0);
+	}
+	list_update(input_d);
+	flatten_paths(input_d);
+	// forward_direction((*input_d)->dest);
+	return (1);
+}
 
 int	dijkstra(t_input **input_d)
 {
@@ -315,66 +384,30 @@ int	dijkstra(t_input **input_d)
 		printf("Failed to initialize neighbors from starting room.\n");
 		return (0);
 	}
-	printf("Dest: %s->%s\n", (*input_d)->dest->name, ((*input_d)->dest->next) ? (*input_d)->dest->next->name : "NULL");
-	list_update(node, input_d);
-	// //debug
-	// while (node)
-	// {
-	// 	if (!ft_strcmp(node->name, "337"))
-	// 	{
-	// 		printf("Found it.\n");
-	// 		t_links *lol;
-	// 		lol = node->to_link;
-	// 		while (lol)
-	// 		{
-	// 			printf("lol = %s <- (%s;%s) -> %s\n", lol->prev->end->name, node->name, lol->end->name, (lol->next) ? lol->next->end->name : "NULL");
-	// 			lol = lol->next;
-	// 		}
-	// 		delete_link(node, &((*input_d)->dest));
-	// 		lol = node->to_link;
-	// 		while (lol)
-	// 		{
-	// 			printf("lol = %s <-", lol->prev->end->name);
-	// 			printf(" %s ->", node->name);
-	// 			printf(" %s\n", lol->end->name);
-	// 			// printf("lol = %s <- %s -> %s\n", lol->prev->end->name, node->name, lol->end->name);
-	// 			lol = lol->next;
-	// 		}
-	// 	}
-	// 	node = node->next;
-	// }
-	inverse_optimal(&node, input_d);
-	printf("Done :)\n");
-	printf("\n========== OP =========\n");
-	printf("Optimal path to |\"%s\"|", (*input_d)->dest->name);
-	printf(" (%d)\n", backwards_node_weight((*input_d)->dest));
-	t_rooms	*optimal;
-
-	optimal = (*input_d)->dest->path;
-	while (optimal)
+	list_update(input_d);
+	if (!bellman(input_d))
 	{
-		printf("%s\n", optimal->name);
-		optimal = optimal->path;
-	}
-	printf("\n========= E-OP ========\n");
-	if (!dij_start(input_d))
-	{
-		printf("BITCH WHY YOU FAILING THE 2ND TIME AROUND CUNT WHYyyyy\n");
+		printf("bellman failed me!\n");
 		return (0);
 	}
-	list_update(node, input_d);
-	printf("Dest: %s->%s\n", (*input_d)->dest->name, ((*input_d)->dest->next) ? (*input_d)->dest->next->name : "NULL");
-	printf("Start forcing direction\n");
-	forward_direction((*input_d)->dest);
-	// // sum_paths(node, input_d, 1); // Boolean trigger make directional
-	printf("\n========== 2nd OP =========\n");
-	printf("Optimal path to |\"%s\"|", (*input_d)->dest->name);
-	printf(" (%d)\n", backwards_node_weight((*input_d)->dest));
-	optimal = (*input_d)->dest->path;
-	while (optimal)
+	printf("{Printing Destination Path} (%d)\n", backwards_node_weight((*input_d)->dest));
+	t_rooms *dpath;
+
+	dpath = (*input_d)->dest;
+	while (dpath)
 	{
-		printf("%s\n", optimal->name);
-		optimal = optimal->path;
+		if (dpath->path)
+		{
+			if (find_link(dpath->path, dpath))
+				printf("%s\n", dpath->name);
+			else
+				printf("No path found from %s -> %s\n", dpath->path->name, dpath->name);
+		}
+		else if (dpath == (*input_d)->origin)
+			printf("%s\n", dpath->name);
+		else
+			printf("Error!?\n");
+		dpath = dpath->path;
 	}
 	return (1);
 }
