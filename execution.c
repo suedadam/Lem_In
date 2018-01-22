@@ -6,7 +6,7 @@
 /*   By: asyed <asyed@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/09 15:13:33 by asyed             #+#    #+#             */
-/*   Updated: 2018/01/09 22:38:45 by asyed            ###   ########.fr       */
+/*   Updated: 2018/01/22 14:40:01 by asyed            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,7 @@ int append_link(t_links **src_links, t_links **new, int weight)
 	t_links	*tmp;
 
 	if (!*src_links)
-	{
 		*src_links = *new;
-		tmp = (*src_links);
-	}
 	else
 	{
 		tmp = (*src_links);

@@ -6,7 +6,7 @@
 /*   By: asyed <asyed@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/09 22:07:38 by asyed             #+#    #+#             */
-/*   Updated: 2018/01/18 15:09:56 by asyed            ###   ########.fr       */
+/*   Updated: 2018/01/22 14:36:54 by asyed            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,26 +214,21 @@ int	delete_link(t_rooms *src, t_rooms **dest)
 		printf("Not found. (%s->%s)\n", src->name, (*dest)->name);
 		return (0);
 	}
-	link->prev->next = link->next;
-	if (link->next)
-		link->next->prev = link->prev;
+	if (link->prev != link)
+	{
+		link->prev->next = link->next;
+		if (link->next)
+			link->next->prev = link->prev;
+		else
+		{
+			printf("Last link (%s->%s) (Deleteing %s)\n", src->name, link->end->name, (*dest)->name);
+			if (!del_lastl(link))
+				return (0);
+		}
+	}
 	else
 	{
-		printf("Last link (%s->%s) (Deleteing %s)\n", src->name, link->end->name, (*dest)->name);
-		if (!del_lastl(link))
-			return (0);
-		// else
-		// {
-		// 	printf("Printing all of the links:\n");
-		// 	t_links	*bullshit;
-
-		// 	bullshit = link;
-		// 	while (bullshit)
-		// 	{
-		// 		printf("%s <- %s -> %s\n", bullshit->prev->end->name, bullshit->end->name, (bullshit->next) ? bullshit->next->end->name : "NULL");
-		// 		bullshit = bullshit->next;
-		// 	}
-		// }
+		src->to_link = NULL;
 	}
 	free(link);
 	return (1);
@@ -348,9 +343,10 @@ int	flatten_paths(t_input **input_d)
 			}
 			else
 			{
-				printf("DELETE EARTHHHHHHHHH\n");
+				printf("DELETE EARTHHHHHHHHH %d == %d\n", one->weight, two->weight);
 				delete_link(node->path, &node);
-				delete_link(node, &(node->path));
+				// delete_link(node->path, &node);
+				// delete_link(node, &(node->path));
 			}
 		}
 		// else

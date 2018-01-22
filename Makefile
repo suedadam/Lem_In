@@ -6,12 +6,12 @@
 #    By: asyed <asyed@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/07 01:09:10 by asyed             #+#    #+#              #
-#    Updated: 2018/01/18 15:08:07 by asyed            ###   ########.fr        #
+#    Updated: 2018/01/22 13:35:20 by asyed            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 NAME = lem_in
 
-CFLAGS += -Wall -Werror -Wextra -g
+CFLAGS += -Wall -Werror -Wextra -g -fsanitize=address 
 
 SRC = main.c \
 		validation.c \
@@ -26,8 +26,8 @@ all: $(NAME)
 
 $(NAME):
 	@make -C $(LIBFT)
-	@gcc $(CFLAGS) $(SRC) $(LIBFT)/libft.a ~/efence/libefence.a -I $(LIBFT) -o $(NAME)
-	# @gcc $(CFLAGS) $(SRC) $(LIBFT)/libft.a -I $(LIBFT) -o $(NAME)
+	# @gcc $(CFLAGS) $(SRC) $(LIBFT)/libft.a ~/efence/libefence.a -I $(LIBFT) -o $(NAME)
+	@gcc $(CFLAGS) $(SRC) $(LIBFT)/libft.a -I $(LIBFT) -o $(NAME)
 	@echo "\033[32mBuilt\033[0m"
 
 clean:
