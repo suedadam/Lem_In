@@ -6,7 +6,7 @@
 /*   By: asyed <asyed@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/09 22:07:38 by asyed             #+#    #+#             */
-/*   Updated: 2018/01/22 14:36:54 by asyed            ###   ########.fr       */
+/*   Updated: 2018/01/22 22:17:36 by asyed            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,23 +172,23 @@ t_links *last_link(t_links *links)
 	return (links);
 }
 
-int	del_lastl(t_links *links)
-{
-	t_links	*tmp;
+// int	del_lastl(t_links *links)
+// {
+// 	t_links	*tmp;
 
-	tmp = links;
-	while (tmp && tmp->prev->next)
-		tmp = tmp->prev;
-	printf("First = \"%s\"\n", tmp->end->name);
-	if (!tmp)
-	{
-		printf("Failed del_lastl()\n");
-		return (0);
-	}
-	tmp->prev = tmp->prev->prev;
-	printf("del_lastl(->prev set to %s && prev = %s)\n", tmp->prev->end->name, last_link(links)->end->name);
-	return (1);
-}
+// 	tmp = links;
+// 	while (tmp && tmp->prev->next)
+// 		tmp = tmp->prev;
+// 	printf("First = \"%s\"\n", tmp->end->name);
+// 	if (!tmp)
+// 	{
+// 		printf("Failed del_lastl()\n");
+// 		return (0);
+// 	}
+// 	tmp->prev = tmp->prev->prev;
+// 	printf("del_lastl(->prev set to %s && prev = %s)\n", tmp->prev->end->name, last_link(links)->end->name);
+// 	return (1);
+// }
 
 int	print_linkstest(t_rooms *src, t_rooms **dest)
 {
@@ -204,36 +204,6 @@ int	print_linkstest(t_rooms *src, t_rooms **dest)
 	(void)dest;
 }
 
-int	delete_link(t_rooms *src, t_rooms **dest)
-{
-	t_links	*link;
-
-	link = find_link(src, *dest);
-	if (!link)
-	{
-		printf("Not found. (%s->%s)\n", src->name, (*dest)->name);
-		return (0);
-	}
-	if (link->prev != link)
-	{
-		link->prev->next = link->next;
-		if (link->next)
-			link->next->prev = link->prev;
-		else
-		{
-			printf("Last link (%s->%s) (Deleteing %s)\n", src->name, link->end->name, (*dest)->name);
-			if (!del_lastl(link))
-				return (0);
-		}
-	}
-	else
-	{
-		src->to_link = NULL;
-	}
-	free(link);
-	return (1);
-}
-
 t_links	*find_link(t_rooms *src, t_rooms *node)
 {
 	t_links	*itt;
@@ -241,6 +211,8 @@ t_links	*find_link(t_rooms *src, t_rooms *node)
 	itt = src->to_link;
 	while (itt)
 	{
+		printf("{FL; %s} (== %s)", src->name, node->name);
+		printf("-> %s (== %s)\n", itt->end->name, node->name);
 		if (itt->end == node)
 			return (itt);
 		itt = itt->next;
@@ -265,15 +237,20 @@ int	reverse_direction(t_rooms *dest)
 	optimal = dest;
 	while (optimal && optimal->path)
 	{
-		if (!delete_link(optimal->path, &optimal))
+		if (!delete_link(&(optimal->path), &optimal))
 		{
 			printf("{reverse_direction} delete_link(err)\n");
 			return (0);
 		}
-		if (!inverse_weight(find_link(optimal, optimal->path)))
+		if (!(inverse_weight(find_link(optimal, optimal->path))))
 		{
-			printf("{reverse_direction} Failed to inverse_weight()\n");
-			return (0);
+			printf("{reverse_direction} Failed to inverse_weight(%s -> %s)\n", optimal->name, optimal->path->name);
+			if (find_link(optimal, optimal->path))
+				printf("Why'd it fail? It exists...\n");
+			else
+				printf("Doesn't exist!? :O \n");
+			// return (0);
+			exit(0);
 		}
 		optimal = optimal->path;
 	}
@@ -287,7 +264,7 @@ int	forward_direction(t_rooms *dest)
 	optimal = dest;
 	while (optimal && optimal->path)
 	{
-		if (!delete_link(optimal, &(optimal->path)))
+		if (!delete_link(&optimal, &(optimal->path)))
 			return (0);
 		optimal = optimal->path;
 	}
@@ -308,49 +285,126 @@ int	inverse_optimal(t_input **input_d)
 	(*input_d)->dest->path = NULL;
 	return (1);
 }
+
 /*
 ** One = prev -> curr
 ** Two = curr -> prev
 */
-int	flatten_paths(t_input **input_d)
-{
-	t_rooms	*node;
-	t_links	*one;
-	t_links	*two;
+// int	flatten_paths(t_input **input_d)
+// {
+// 	t_rooms	*node;
+// 	t_links	*one;
+// 	t_links	*two;
 
-	node = (*input_d)->dest;
-	while (node)
+// 	node = (*input_d)->dest;
+// 	while (node)
+// 	{
+// 		if (node->path)
+// 		{
+// 			printf("Evaluating %s and %s\n", node->path->name, node->name);
+// 			if (!(one = find_link(node->path, node)) || !(two = find_link(node, node->path)))
+// 			{
+// 				printf("Failed to find :'( \n");
+// 				// return (0);
+// 				node = node->path;
+// 				continue;
+// 			}
+// 			if (one->weight > two->weight)
+// 			{
+// 				printf("DELETE ONE\n");
+// 				delete_link(node->path, &node);
+// 			}
+// 			else if (two->weight > one->weight)
+// 			{
+// 				printf("DELETE TWO\n");
+// 				delete_link(node, &(node->path));
+// 			}
+// 			else
+// 			{
+// 				printf("{%s %s} DELETE EARTHHHHHHHHH %d == %d\n", node->name, node->path->name, one->weight, two->weight);
+// 				delete_link(node->path, &node);
+// 				// delete_link(node, &(node->path));
+// 			}
+// 		}
+// 		// else
+// 			//... continue...?
+// 		node = node->path;
+// 	}
+// 	return (1);
+// }
+
+int	del_lastl(t_links *link)
+{
+	while (link)
 	{
-		if (node->path)
+		if (!link->prev->next)
+			break ;
+		link = link->prev;
+	}
+	if (!link)
+	{
+		printf("--------------NOOOOOOOOOOOOO\n");
+		return (0);
+	}
+	link->prev = link->prev->prev;
+	return (1);
+}
+
+int	delete_link(t_rooms **node, t_rooms **findme)
+{
+	t_links	*link;
+
+	link = (*node)->to_link;
+	while (link)
+	{
+		if (link->end == *findme)
 		{
-			printf("Evaluating %s and %s\n", node->path->name, node->name);
-			if (!(one = find_link(node->path, node)) || !(two = find_link(node, node->path)))
+			if (link == (*node)->to_link && link->prev != link)
 			{
-				printf("Failed to find :'( \n");
-				// return (0);
-				node = node->path;
-				continue;
+				(*node)->to_link = link->next;
+				link->next->prev = link->prev;
+				link->prev->next = NULL;
 			}
-			if (one->weight > two->weight)
-			{
-				printf("DELETE ONE\n");
-				delete_link(node->path, &node);
-			}
-			else if (two->weight > one->weight)
-			{
-				printf("DELETE TWO\n");
-				delete_link(node, &(node->path));
-			}
+			else if (link->prev == link)
+				(*node)->to_link = NULL;
 			else
 			{
-				printf("DELETE EARTHHHHHHHHH %d == %d\n", one->weight, two->weight);
-				delete_link(node->path, &node);
-				// delete_link(node->path, &node);
-				// delete_link(node, &(node->path));
+				link->prev->next = link->next;
+				if (link->next)
+					link->next->prev = link->prev;
+			}
+			free(link);
+			return (1);
+		}
+		link = link->next;
+	}
+	return (0);
+}
+
+int	flat_paths(t_input **input_d)
+{
+	t_rooms	*node;
+
+	node = (*input_d)->dest;
+	while (node && node->path)
+	{
+		printf("Deleting %s -> %s\n", node->name, node->path->name);
+		if (find_link(node, node->path))
+		{
+			printf("Link is there!!!!\n");
+			if (!delete_link(&node, &(node->path)))
+			{
+				printf("Failed to delete!!! %s -> %s\n", node->name, node->path->name);
+				// return (0);
+				exit(1);
 			}
 		}
-		// else
-			//... continue...?
+		else
+			printf("Link non-existant\n");
+		// printf("[Delete] %s -> %s\n", node->path->name, node->name);
+		if (find_link(node, node->path))
+			printf("******** bitch wtf\n");
+		// delete_link(node->path, &node);
 		node = node->path;
 	}
 	return (1);
@@ -358,14 +412,38 @@ int	flatten_paths(t_input **input_d)
 
 int	bellman(t_input **input_d)
 {
-	inverse_optimal(input_d);
-	if (!dij_start(input_d))
+	t_rooms *lol;
+
+	lol = find_room(input_d, "G");
+	t_links *wtf;
+
+	wtf = lol->to_link;
+	while (wtf)
 	{
-		printf("Failed dij_start(2nd)\n");
-		return (0);
+		printf("{WTF} %s -> %s\n", lol->name, wtf->end->name);
+		wtf = wtf->next;
 	}
-	list_update(input_d);
-	flatten_paths(input_d);
+	t_rooms *huh;
+	huh = find_room(input_d, "H");
+	delete_link(&lol, &huh);
+	wtf = lol->to_link;
+	while (wtf)
+	{
+		printf("{WTF} %s -> (%s <- )%s\n", lol->name, wtf->prev->end->name, wtf->end->name);
+		wtf = wtf->next;
+	}
+	// inverse_optimal(input_d);
+	// if (!dij_start(input_d))
+	// {
+	// 	printf("Failed dij_start(2nd)\n");
+	// 	return (0);
+	// }
+	// list_update(input_d);
+	// flat_paths(input_d);
+	// if (!delete_link(&((*input_d)->dest), &((*input_d)->dest->path)))
+	// 	printf("hmmmm okay bitch\n");
+	// flat_paths(input_d);
+	// flatten_paths(input_d);
 	// forward_direction((*input_d)->dest);
 	return (1);
 }
@@ -402,7 +480,7 @@ int	dijkstra(t_input **input_d)
 		else if (dpath == (*input_d)->origin)
 			printf("%s\n", dpath->name);
 		else
-			printf("Error!?\n");
+			printf("Error!? No link from %s -> %s\n", (dpath->path) ? dpath->path->name : "NULL", dpath->name);
 		dpath = dpath->path;
 	}
 	return (1);
