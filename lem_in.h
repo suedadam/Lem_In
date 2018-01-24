@@ -6,7 +6,7 @@
 /*   By: asyed <asyed@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/03 13:19:23 by asyed             #+#    #+#             */
-/*   Updated: 2018/01/22 18:59:23 by asyed            ###   ########.fr       */
+/*   Updated: 2018/01/24 00:05:16 by asyed            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ int		p_comment(t_input **input_d, char *line);
 int		print_all(t_input **input_d, char *line);
 int		print_links(t_input **input_d, char *line);
 int		p_command(t_input **input_d, char *line);
+int 	append_link(t_links **src_links, t_links **new, int weight);
 
 /*
 ** main.c 
