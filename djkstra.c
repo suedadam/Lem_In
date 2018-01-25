@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   djkstra.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: asyed <asyed@student.42.fr>                +#+  +:+       +#+        */
+/*   By: suedadam <suedadam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/09 22:07:38 by asyed             #+#    #+#             */
-/*   Updated: 2018/01/24 00:19:09 by asyed            ###   ########.fr       */
+/*   Updated: 2018/01/25 03:07:26 by suedadam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -366,8 +366,9 @@ t_rooms	*copy_solution(t_rooms *source)
 		// tmp->path = dest->path;
 		itt->path = tmp;
 		itt = itt->path;
+		dest = dest->path;
 	}
-	return (itt->path);
+	return (new->path);
 }
 
 /*
@@ -472,6 +473,12 @@ int	delete_link(t_rooms **node, t_rooms **findme)
 			printf("{1} %p <- %p <- link = %p -> %p -> %p\n", link->prev->prev, link->prev, link, link->next, (link->next) ? link->next->next : NULL);
 			if (link == (*node)->to_link)
 			{
+				if (link->prev == link)
+				{
+					free((*node)->to_link);
+					(*node)->to_link = NULL;
+					return (1);
+				}
 				printf("Repositioned\n");
 				(*node)->to_link = link->prev;
 				link = (*node)->to_link;
@@ -572,28 +579,60 @@ int	flat_paths(t_input **input_d)
 	return (1);
 }
 
+// int	fix_direction(t_input **input_d, t_rooms *copy)
+// {
+// 	int		weight;
+// 	t_links	*link;
+// 	t_rooms	*dest;
+
+// 	if (!copy)
+// 		return (0);
+// 	dest = (*input_d)->dest;
+// 	while (copy)
+// 	{
+
+// 		dest = find_room(input_d, copy);
+// 		// if (!(link = find_link(copy, copy->path)))
+// 		// {
+// 		// 	printf("Failed to find link?\n");
+// 		// 	exit(1);
+// 		// }
+// 		// weight = link->weight;
+// 		// if (!create_link(copy->path, copy, weight))
+// 		// {
+// 		// 	printf("Failed to create_link()\n");
+// 		// 	exit(1);
+// 		// }
+// 		copy = copy->path;
+// 	}
+// 	return (1);
+// }
+
 int	bellman(t_input **input_d)
 {
 	t_rooms	*copy;
+	// t_rooms *mani;
 
 	if (!(copy = inverse_optimal(input_d)))
 	{
 		printf("You failed me sir.\n");
 		return (0);
 	}
-	while (copy)
-	{
-		printf("{COPY} %s\n", copy->name);
-		copy = copy->path;
-	}
 	// printf("bitch fucker\n");
-	// if (!dij_start(input_d))
-	// {
-	// 	printf("Failed dij_start(2nd)\n");
-	// 	return (0);
-	// }
+	if (!dij_start(input_d))
+	{
+		printf("Failed dij_start(2nd)\n");
+		return (0);
+	}
 	// printf("what? :O \n");
-	// list_update(input_d);
+	list_update(input_d);
+	// fix_direction(copy);
+	// mani = copy;
+	// while (mani)
+	// {
+	// 	printf("{COPY} %s\n", mani->name);
+	// 	mani = mani->path;
+	// }
 	// flat_paths(input_d);
 	return (1);
 }
@@ -609,11 +648,11 @@ int	dijkstra(t_input **input_d)
 		return (0);
 	}
 	list_update(input_d);
-	if (!bellman(input_d))
-	{
-		printf("bellman failed me!\n");
-		return (0);
-	}
+	// if (!bellman(input_d))
+	// {
+	// 	printf("bellman failed me!\n");
+	// 	return (0);
+	// }
 	printf("stuck at printing dest path!? \n");
 	printf("{Printing Destination Path} (%d)\n", INFINITY);
 	t_rooms *dpath;
