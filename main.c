@@ -6,20 +6,14 @@
 /*   By: asyed <asyed@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/03 13:10:41 by asyed             #+#    #+#             */
-/*   Updated: 2018/01/15 15:34:34 by asyed            ###   ########.fr       */
+/*   Updated: 2018/01/26 15:33:43 by asyed            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lem_in.h"
 #include <stdlib.h>
-#include <stdio.h> //lol
-#include <errno.h> //lol
-//*Deete me
-#include <sys/stat.h> 
-#include <fcntl.h>
-//End delete me
-
-// http://macfreek.nl/memory/Disjoint_Path_Finding
+#include <stdio.h>
+#include <errno.h>
 
 struct s_syntax validator[] = {
 	{"link", &is_link, &new_link},
@@ -29,37 +23,13 @@ struct s_syntax validator[] = {
 	{NULL, NULL, NULL}
 };
 
-
-int	print_weight(t_input **input_d, char *line)
-{
-	t_rooms	*room;
-	int		weight;
-	char	*room_name;
-	int		i;
-
-	i = ft_strclen(line, ' ');
-	room_name = ft_strdup(&(line[++i]));
-	room = find_room(input_d, room_name);
-	(void)weight;
-	return (1);
-}
-
-int	debug_weight(t_input *input_d, char *line)
-{
-	(void)input_d;
-	line = ft_strcdup(line, ' ');
-	if (!ft_strcmp(line, "weightprint"))
-		return (1);
-	return (0);
-}
-
-int	comment_parse(char *line)
+int		comment_parse(char *line)
 {
 	ft_putstr(line);
 	return (1);
 }
 
-int	total_ants(t_input **input_d)
+int		total_ants(t_input **input_d)
 {
 	char	*line;
 
@@ -85,20 +55,26 @@ int	total_ants(t_input **input_d)
 	return (0);
 }
 
-int	parse_input(t_input **input_d)
+void	wrap_total_ants(t_input **input_d)
+{
+	if (!total_ants(input_d))
+	{
+		ft_putstr("Error\n");
+		exit(1);
+	}
+}
+
+int		parse_input(t_input **input_d)
 {
 	char	*line;
 	int		i;
 	int		res;
 
-	line = NULL;
-	if (!total_ants(input_d))
-		return (0);
-	while (get_next_line(0, &line))
+	wrap_total_ants(input_d);
+	while (!(line = NULL) && get_next_line(0, &line))
 	{
 		i = 0;
 		while (validator[i].match)
-		{
 			if ((res = validator[i].match(*input_d, line)) == 1)
 			{
 				if (validator[i].exec(input_d, line))
@@ -106,19 +82,18 @@ int	parse_input(t_input **input_d)
 				else
 					return (0);
 			}
-			if (res == -1)
+			else if (res == -1)
 				return (0);
-			i++;
-		}
+			else
+				i++;
 		if (!validator[i].match)
 			return (0);
 		free(line);
-		line = NULL;
 	}
 	return (1);
 }
 
-int	main(void)
+int		main(void)
 {
 	t_input	*input_d;
 
