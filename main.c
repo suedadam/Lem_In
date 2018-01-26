@@ -26,45 +26,9 @@ struct s_syntax validator[] = {
 	{"comments", &is_comment, &p_comment},
 	{"command", &is_command, &p_command},
 	{"Normal room add", &is_valid_room, &new_room},
-	{"debugger print all", &debug_print, &print_all},
-	{"Debug printing all links", &debug_print_links, &print_links},
-	{"weight debuging lol", &debug_weight, &print_weight},
-	{"Make it have a huge path length", &debug_pathbuilder, &buildmeafuckingpath},
 	{NULL, NULL, NULL}
 };
 
-int	buildmeafuckingpath(t_input **input_d, char *line)
-{
-	int		i;
-	char	*room_name;
-	char	*dest_name;
-	t_rooms	*src_room;
-	t_rooms	*dst_room;
-
-	i = 0;
-	i = ft_strclen(line, ' ');
-	room_name = ft_strcdup(&(line[++i]), ' ');
-	i += ft_strclen(&(line[i]), ' ');
-	dest_name = ft_strdup(&(line[++i]));
-	printf("Src room = \"%s\" dest room = \"%s\"\n", room_name, dest_name);
-	dst_room = find_room(input_d, dest_name);
-	src_room = find_room(input_d, room_name);
-	if (!dst_room->path)
-		dst_room->path = src_room;
-	else
-		printf("Make append feature.\n");
-	(void)input_d;
-	return (1);
-}
-
-int	debug_pathbuilder(t_input *input_d, char *line)
-{
-	(void)input_d;
-	line = ft_strcdup(line, ' ');
-	if (!ft_strcmp(line, "pathbuilder"))
-		return (1);
-	return (0);
-}
 
 int	print_weight(t_input **input_d, char *line)
 {
@@ -77,8 +41,6 @@ int	print_weight(t_input **input_d, char *line)
 	room_name = ft_strdup(&(line[++i]));
 	room = find_room(input_d, room_name);
 	(void)weight;
-	printf("Found room: \"%s\"\n", room->name);
-	printf("Path length = \"%d\"\n", node_weight(room));
 	return (1);
 }
 
@@ -93,7 +55,7 @@ int	debug_weight(t_input *input_d, char *line)
 
 int	comment_parse(char *line)
 {
-	printf("Comment = \"%s\"\n", line);
+	ft_putstr(line);
 	return (1);
 }
 
@@ -139,7 +101,6 @@ int	parse_input(t_input **input_d)
 		{
 			if ((res = validator[i].match(*input_d, line)) == 1)
 			{
-				// printf("Passed match(\"%s\")\n", validator[i].op_name);
 				if (validator[i].exec(input_d, line))
 					break ;
 				else
@@ -163,17 +124,10 @@ int	main(void)
 
 	input_d = ft_memalloc(sizeof(t_input));
 	if (!input_d)
-	{
-		printf("Error: %s\n", strerror(errno));
-		return (-1);
-	}
+		exit(1);
 	if (parse_input(&input_d))
-	{
-		printf("Starting!\n");
 		dijkstra(&input_d);
-		// ..
-	}
 	else
-		printf("Error\n"); //Change to ft_printf
+		ft_putstr("Error\n");
 	return (0);
 }

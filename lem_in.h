@@ -27,6 +27,7 @@ typedef struct	s_links
 typedef struct	s_rooms
 {
 	char			*name;
+	size_t			ants;
 	int				x;
 	int				y;
 	struct s_rooms	*path;

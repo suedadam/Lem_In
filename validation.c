@@ -40,22 +40,19 @@ int	is_link(t_input *input_d, char *line)
 		return (0);
 	if (!is_room(input_d->origin, room) && !is_room(input_d->rooms, room) && !is_room(input_d->dest, room))
 	{
-		printf("{SRC} Room name \"%s\" is not currently registered\n", room);
 		free(room);
-		return (-1);
+		exit(1);
 	}
 	i = ft_strclen(line, '-');
 	if (line[i++] != '-')
 	{
-		printf("Error: line[%d] = %c instead of \'-\'\n", i - 1, line[i - 1]);
 		free(room);
-		return (-1);
+		exit(1);
 	}
 	if (!is_room(input_d->origin, &(line[i])) && !is_room(input_d->rooms, &(line[i])) && !is_room(input_d->dest, &(line[i])))
 	{
-		printf("{DEST} Room name \"%s\" is not currently registered\n", room);
 		free(room);
-		return (-1);
+		exit(1);
 	}
 	return (1);
 }
